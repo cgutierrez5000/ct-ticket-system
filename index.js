@@ -5,11 +5,14 @@ import {
     getOpenTickets,
     findTicketById,
     hasUrgentTickets,
-    changeTicketStatus
+    getTicketsByAssignee,
+    getTicketsByStatus,
+    addTicket,
+    deleteTicket
 } from "./utils/ticketUtils.js";
 
 
-console.log("=== CT TICKET SYSTEM v0.1 ===");
+console.log("=== CT TICKET SYSTEM v0.2 ===");
 console.log("\n");
 
 console.log("HIGH PRIORITY TICKETS\n---------------------");
@@ -32,13 +35,35 @@ const hasUrgent = hasUrgentTickets(tickets);
 console.log(hasUrgent ? 'Yes' : 'No');
 console.log("\n");
 
-const originalTicket = tickets[0];
-console.log("UPDATING TICKET #101\n--------------------");
-const updatedTicket = changeTicketStatus(originalTicket, "closed");
-console.log("Original Status:", originalTicket.status);
-console.log("Updated Status:", updatedTicket.status);
-console.log(
-    "Same object?",
-    originalTicket === updatedTicket
-);
+console.log("TICKETS ASSIGNED TO CARLOS\n--------------------------");
+const carlosTickets = getTicketsByAssignee(tickets, "Carlos");
+console.log(carlosTickets.map(ticket => "#" + ticket.id + " - " + ticket.title).join("\n"));
+console.log("\n");
+
+console.log("IN PROGRESS TICKETS\n-------------------");
+const inProgressTickets = getTicketsByStatus(tickets, "in progress");
+console.log(inProgressTickets.map(ticket => "#" + ticket.id + " - " + ticket.title).join("\n"));
+console.log("\n");
+
+console.log("ADDING TICKET #106\n-------------------");
+const newTicket = {
+    id: 106,
+    title: "Contact form validation issue",
+    priority: "medium",
+    status: "open",
+    assignedTo: "Carlos"
+};
+
+const ticketsWithNewTicket = addTicket(tickets, newTicket);
+console.log("Original count:", tickets.length);
+console.log("Updated Count:", ticketsWithNewTicket.length);
+console.log("\n");
+
+console.log("DELETING TICKET #104\n--------------------");
+const ticketsAfterDelete = deleteTicket(tickets, 104);
+console.log("Original count:", tickets.length);
+console.log("Updated Count:", ticketsAfterDelete.length);
+console.log("Original still has #104?", tickets.some(ticket => ticket.id === 104));
+console.log("New array has #104?", ticketsAfterDelete.some(ticket => ticket.id === 104));
+console.log("\n");
 
