@@ -10,7 +10,9 @@ import {
     addTicket,
     deleteTicket,
     isValidPriority,
-    isValidStatus
+    isValidStatus,
+    isValidTicket,
+    ticketIdExists
 } from "./utils/ticketUtils.js";
 
 
@@ -27,6 +29,11 @@ const openTickets = getOpenTickets(tickets);
 console.log(openTickets.map(ticket => "#" + ticket.id + " - " + ticket.title).join("\n"));
 console.log("\n");
 
+console.log("TICKET #103\n-----------");
+const ticketById = findTicketById(tickets, 103);
+console.log(`#${ticketById.id} - ${ticketById.title}\nPriority: ${ticketById.priority}\nStatus: ${ticketById.status}\nAssigned to: ${ticketById.assignedTo}`);
+console.log("\n");
+
 console.log("URGENT TICKETS?\n---------------");
 const hasUrgent = hasUrgentTickets(tickets);
 console.log(hasUrgent ? 'Yes' : 'No');
@@ -40,6 +47,25 @@ console.log("\n");
 console.log("IN PROGRESS TICKETS\n-------------------");
 const inProgressTickets = getTicketsByStatus(tickets, "in progress");
 console.log(inProgressTickets.map(ticket => "#" + ticket.id + " - " + ticket.title).join("\n"));
+console.log("\n");
+
+
+
+
+
+
+console.log("ADDING TICKET #106\n-------------------");
+const newTicket = {
+    id: 106,
+    title: "Contact form validation issue",
+    priority: "medium",
+    status: "open",
+    assignedTo: "Carlos"
+};
+
+const ticketsWithNewTicket = addTicket(tickets, newTicket);
+console.log("Original count:", tickets.length);
+console.log("Updated Count:", ticketsWithNewTicket.length);
 console.log("\n");
 
 console.log("DELETING TICKET #104\n--------------------");
@@ -94,13 +120,13 @@ console.log(
 );
 console.log("\n");
 
-console.log("REJECTING INVALID TICKET #107\n-----------------------------");
+console.log("REJECTING DUPLICATE TICKET #107\n------------------------------");
 const invalidResult = addTicket(tickets, invalidTicket);
 console.log("Original count:", tickets.length);
 console.log("Updated count:", invalidResult.length);
 console.log(
-    "Ticket #107 added?",
-    invalidResult.some(ticket => ticket.id === 107)
+    "How many #101 tickets: ",
+    invalidResult.filter(ticket => ticket.id === 101).length
 );
 console.log("\n");
 
@@ -115,12 +141,15 @@ console.log(
 console.log("\n");
 
 console.log("ARRAY REFERENCE CHECK\n-------------------------");
-(tickets === validResult) ? console.log("Valid add returns original array? : Yes") : console.log("Valid add returns original array? : No");
-(tickets === invalidResult) ? console.log("Invalid add returns original array? : Yes") : console.log("Invalid add returns original array? : No");
-(tickets === duplicateResult) ? console.log("Duplicate add returns original array? : Yes") : console.log("Duplicate add returns original array? : No");
+const validResult = addTicket(tickets, validTicket);
+const invalidResult = addTicket(tickets, invalidTicket);
+const duplicateResult = addTicket(tickets, duplicateTicket);
+console.log(tickets === validResult);
+console.log(tickets === invalidResult);
+console.log(tickets === duplicateResult);
 console.log("\n");
 
-console.log("FINDING EXISTING TICKET\n-------------------------");
+console.log("FINDING EXISTING TICKET");
 const existingTicket = findTicketById(tickets, 103);
 if (existingTicket) {
     console.log(`#${existingTicket.id} - ${existingTicket.title}`);
@@ -128,7 +157,7 @@ if (existingTicket) {
     console.log("Ticket not found");
 }
 
-console.log("\nFINDING MISSING TICKET\n-------------------------");
+console.log("\nFINDING MISSING TICKET");
 const missingTicket = findTicketById(tickets, 999);
 if (missingTicket) {
     console.log(`#${missingTicket.id} - ${missingTicket.title}`);
