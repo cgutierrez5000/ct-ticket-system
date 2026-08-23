@@ -9,7 +9,7 @@ full-stack application.
 
 ## Current Version
 
-### v0.4 — JavaScript Business Logic
+### v0.4 — Automated Testing
 
 Current functionality includes:
 
@@ -23,7 +23,10 @@ Current functionality includes:
 - Immutable array updates
 - Add tickets without mutating existing data
 - Delete tickets without mutating existing data
+- Ticket validation and defensive input handling
+- Duplicate ticket ID detection
 - Modular JavaScript using ES modules
+- Automated unit testing with Vitest
 
 ## Technologies
 
@@ -31,13 +34,56 @@ Currently:
 
 - JavaScript
 - Node.js
-- Git / GitHub
+- Vitest
+- Git
+- GitHub
+
+## Automated Testing
+
+The project uses Vitest for automated unit testing.
+
+Run tests in watch mode:
+
+```bash
+npm test
+```
+
+Run the test suite once:
+
+```bash
+npm test -- --run
+```
+
+Current test coverage includes:
+
+- Priority validation
+- Status validation
+- Ticket validation
+- Ticket lookup
+- Ticket ID duplicate detection
+- Adding valid tickets
+- Rejecting invalid tickets
+- Rejecting duplicate IDs
+- Immutable ticket status updates
+- Ticket deletion
+- Ticket filtering by status
+- Edge cases and defensive inputs
+
+Current test suite: **20 passing tests**
 
 ## Project Roadmap
 
-The application will progressively expand to include:
+### v0.5 — TypeScript
+
+- TypeScript fundamentals
+- Ticket interfaces and types
+- Typed function parameters
+- Typed return values
+- Union types
+- Compile-time type checking
 
 ### Front End
+
 - React
 - TypeScript
 - Responsive ticket dashboard
@@ -46,6 +92,7 @@ The application will progressively expand to include:
 - Forms and validation
 
 ### Back End
+
 - Node.js API
 - REST endpoints
 - Business logic and validation
@@ -54,44 +101,19 @@ The application will progressively expand to include:
 - User account creation and management
 
 ### Database
+
 - PostgreSQL
 - Relational data modeling
 - Users, tickets, categories, comments, and assignments
 - Database migrations and constraints
 
 ### Testing
+
 - Unit testing
 - API/integration testing
 
-## Automated Testing
-The project uses Vitest for automated unit testing.
-
-Run the test suite:
-
-npm test
-
-Run tests once without watch mode:
-
-npm test -- --run
-
-Current test coverage includes:
-
-Priority validation
-Status validation
-Ticket validation
-Ticket lookup
-Ticket ID duplicate detection
-Adding valid tickets
-Rejecting invalid tickets
-Rejecting duplicate IDs
-Immutable ticket status updates
-Ticket deletion
-Ticket filtering by status
-Edge cases and defensive inputs
-
-Current test suite: 20 passing tests
-
 ### Platform & Deployment
+
 - Docker
 - GitHub Actions
 - CI/CD
