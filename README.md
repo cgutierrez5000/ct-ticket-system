@@ -9,7 +9,7 @@ full-stack application.
 
 ## Current Version
 
-### v0.2 — JavaScript Business Logic
+### v0.4 — JavaScript Business Logic
 
 Current functionality includes:
 
@@ -62,6 +62,34 @@ The application will progressively expand to include:
 ### Testing
 - Unit testing
 - API/integration testing
+
+## Automated Testing
+The project uses Vitest for automated unit testing.
+
+Run the test suite:
+
+npm test
+
+Run tests once without watch mode:
+
+npm test -- --run
+
+Current test coverage includes:
+
+Priority validation
+Status validation
+Ticket validation
+Ticket lookup
+Ticket ID duplicate detection
+Adding valid tickets
+Rejecting invalid tickets
+Rejecting duplicate IDs
+Immutable ticket status updates
+Ticket deletion
+Ticket filtering by status
+Edge cases and defensive inputs
+
+Current test suite: 20 passing tests
 
 ### Platform & Deployment
 - Docker
