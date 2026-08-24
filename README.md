@@ -9,29 +9,24 @@ full-stack application.
 
 ## Current Version
 
-### v0.4 — Automated Testing
+### v0.5 — TypeScript
 
 Current functionality includes:
 
-- Ticket data model
-- Ticket lookup by ID
-- Priority filtering
-- Status filtering
-- Assignee filtering
-- Urgent-ticket detection
-- Immutable ticket status updates
-- Immutable array updates
-- Add tickets without mutating existing data
-- Delete tickets without mutating existing data
-- Ticket validation and defensive input handling
-- Duplicate ticket ID detection
-- Modular JavaScript using ES modules
+- Modular TypeScript using ES modules
+- Typed Ticket interface and domain models
+- Union types for ticket priority and status
+- Typed function parameters and return values
+- Defensive handling of unknown input
+- Type guards and type narrowing
+- Compile-time type checking
 - Automated unit testing with Vitest
 
 ## Technologies
 
 Currently:
 
+- TypeScript
 - JavaScript
 - Node.js
 - Vitest
@@ -54,6 +49,12 @@ Run the test suite once:
 npm test -- --run
 ```
 
+Run TypeScript type checking:
+
+```bash
+npx tsc --noEmit
+```
+
 Current test coverage includes:
 
 - Priority validation
@@ -73,14 +74,14 @@ Current test suite: **20 passing tests**
 
 ## Project Roadmap
 
-### v0.5 — TypeScript
+### v0.6 — React UI
 
-- TypeScript fundamentals
-- Ticket interfaces and types
-- Typed function parameters
-- Typed return values
-- Union types
-- Compile-time type checking
+- React application setup
+- TypeScript integration
+- Responsive ticket dashboard
+- Ticket grids and detail views
+- Search, filtering, sorting, and categorization
+- Forms and validation
 
 ### Front End
 

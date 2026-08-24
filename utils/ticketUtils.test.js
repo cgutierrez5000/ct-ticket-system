@@ -1,17 +1,17 @@
 import { describe, test, expect } from "vitest";
-import tickets from "../data/tickets.js";
+import tickets from "../data/tickets.js"; // actual ticket data path
+
 import {
     isValidPriority,
     isValidStatus,
     findTicketById,
-    isValidPriority,
     isValidTicket,
     addTicket,
     updateTicketStatus,
     deleteTicket,
     ticketIdExists,
     getTicketsByStatus
-} from "./ticketUtils.js";
+} from "./ticketUtils.ts";
 
 describe("isValidPriority", () => {
     test("high should be a valid priority", () => {
