@@ -62,55 +62,81 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="title">Title</label>
-                <input
+        <form className="mb-8 rounded-xl bg-white p-6 shadow-sm"
+            onSubmit={handleSubmit}>
+            <h2 className="mb-6 text-xl font-bold text-slate-900">
+                {editingTicket ? "Edit Ticket" : "Create Ticket"}
+            </h2>
+            <div className="mb-4">
+                <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="title">Title</label>
+                <input className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 
+                    text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     id="title"
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                 />
             </div>
 
-            {error && <p>{error}</p>}
+            {error && (<p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>)}
 
-            <div>
-                <label htmlFor="description">Description</label>
-                <textarea
+            <div className="mb-4">
+                <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="description">Description</label>
+                <textarea className="w-full min-h-28 resize-y rounded-lg border border-slate-300 bg-white px-4 py-2.5 
+                    text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     id="description"
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
                 />
-                <select value={priority} onChange={(event) => setPriority(event.target.value as TicketPriority)}>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                </select>
-                <select value={assignedTo} onChange={(event) => setAssignedTo(event.target.value)}>
-                    <option value="Unassigned">Unassigned</option>
-                    <option value="Carlos">Carlos</option>
-                    <option value="Tom">Tom</option>
-                    <option value="Earl">Earl</option>
-                    <option value="John">John</option>
-                </select>
             </div>
+            <div className="mb-6 grid gap-4 md:grid-cols-2">
+                <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="priority">Priority</label>
+                    <select className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 
+                        text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                        id="priority"
+                        value={priority}
+                        onChange={(event) => setPriority(event.target.value as TicketPriority)}
+                    >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="assignedTo">Assigned To</label>
+                    <select className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 
+                        text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                        id="assignedTo"
+                        value={assignedTo}
+                        onChange={(event) => setAssignedTo(event.target.value)}>
+                        <option value="Unassigned">Unassigned</option>
+                        <option value="Carlos">Carlos</option>
+                        <option value="Tom">Tom</option>
+                        <option value="Earl">Earl</option>
+                        <option value="John">John</option>
+                    </select>
+                </div>
 
-            <button type="submit">
-                {
-                    editingTicket ? "Update Ticket" : "Add Ticket"
+            </div>
+            <div className="flex flex-wrap gap-3">
+                <button className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+                    type="submit">
+                    {
+                        editingTicket ? "Update Ticket" : "Add Ticket"
 
-                }
-            </button>
-
-            {editingTicket && (
-                <button
-                    type="button"
-                    onClick={onCancelEdit}>
-                    Cancel Edit
+                    }
                 </button>
-            )}
 
+                {editingTicket && (
+                    <button className="rounded-lg border border-slate-300 bg-white 
+                        px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        type="button"
+                        onClick={onCancelEdit}>
+                        Cancel Edit
+                    </button>
+                )}
+            </div>
 
         </form>
     );

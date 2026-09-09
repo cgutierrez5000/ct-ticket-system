@@ -8,9 +8,11 @@ export default function SearchBox({
     onSearchChange
 }: SearchBoxProps) {
     return (
-        <div>
-            <label htmlFor="search_tickets">Search tickets</label>
+        <div className="mt-4">
+            <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="search_tickets">Search tickets</label>
             <input
+                className="w-full rounded-lg border border-slate-300 bg-white 
+                px-4 py-2.5 text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                 id="search_tickets"
                 placeholder="Search by title..."
                 value={searchTerm}
