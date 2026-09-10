@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import type { SubmitEvent } from "react";
-import type { NewTicketData, TicketPriority, Ticket } from "../../types/ticket";
+import type { NewTicketData, UpdateTicketData, TicketPriority, TicketStatus, Ticket, } from "../../types/ticket";
 
 
 
 type TicketFormProps = {
     onAddTicket: (newTicketData: NewTicketData) => void;
     editingTicket: Ticket | undefined;
-    onUpdateTicket: (newTicketData: NewTicketData) => void;
-    onCancelEdit: () => void
+    onUpdateTicket: (updatedTicketData: UpdateTicketData) => void;
+    onCancelEdit: () => void;
 };
 
 export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket, onCancelEdit }: TicketFormProps) {
@@ -17,18 +17,21 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
     const [error, setError] = useState("");
     const [priority, setPriority] = useState<TicketPriority>("medium");
     const [assignedTo, setAssignedTo] = useState("Unassigned");
+    const [status, setStatus] = useState<TicketStatus>("open");
 
     useEffect(() => {
         if (editingTicket) {
             setTitle(editingTicket.title);
             setDescription(editingTicket.description);
             setPriority(editingTicket.priority);
+            setStatus(editingTicket.status);
             setAssignedTo(editingTicket.assignedTo);
         } else {
             setError("");
             setTitle("");
             setDescription("");
             setPriority("medium");
+            setStatus("open");
             setAssignedTo("Unassigned");
         }
     }, [editingTicket]);
@@ -49,7 +52,12 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
 
 
         if (editingTicket) {
-            onUpdateTicket(newTicketData);
+            const updatedTicketData: UpdateTicketData = {
+                ...newTicketData,
+                status,
+            };
+
+            onUpdateTicket(updatedTicketData);
         } else {
             onAddTicket(newTicketData);
         }
@@ -58,6 +66,7 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
         setTitle("");
         setDescription("");
         setPriority("medium");
+        setStatus("open");
         setAssignedTo("Unassigned");
     }
 
@@ -103,6 +112,31 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
                         <option value="urgent">Urgent</option>
                     </select>
                 </div>
+                {editingTicket && (
+                    <div>
+                        <label
+                            className="mb-2 block text-sm font-medium text-slate-700"
+                            htmlFor="status"
+                        >
+                            Status
+                        </label>
+
+                        <select
+                            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5
+                text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                            id="status"
+                            value={status}
+                            onChange={(event) =>
+                                setStatus(event.target.value as TicketStatus)
+                            }
+                        >
+                            <option value="open">Open</option>
+                            <option value="in progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                )}
+
                 <div>
                     <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="assignedTo">Assigned To</label>
                     <select className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 

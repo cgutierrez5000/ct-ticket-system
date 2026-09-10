@@ -26,5 +26,14 @@ export type NewTicketData = {
     description: string;
     priority: TicketPriority;
     assignedTo: string;
+}
+
+export type UpdateTicketData = {
+    title: string;
+    description: string;
+    priority: TicketPriority;
+    status: TicketStatus;
+    assignedTo: string;
 };
+
 

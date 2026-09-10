@@ -4,7 +4,7 @@ import TicketSummary from "./components/TicketSummary";
 import TicketFilters from "./components/TicketFilters";
 import TicketForm from "./components/TicketForm";
 import SearchBox from "./components/SearchBox";
-import type { Ticket, TicketStatus, NewTicketData } from "../types/ticket";
+import type { Ticket, TicketStatus, NewTicketData, UpdateTicketData } from "../types/ticket";
 
 
 
@@ -106,7 +106,7 @@ export default function App() {
             });
     }
 
-    function handleUpdateTicket(updatedTicketData: NewTicketData) {
+    function handleUpdateTicket(updatedTicketData: UpdateTicketData) {
         setError(null);
 
         fetch(`http://localhost:3001/api/tickets/${editingTicketId}`, {
