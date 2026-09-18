@@ -37,7 +37,7 @@ export default function TicketCard({ ticket, onDelete, onEdit }: TicketCardProps
                 </div>
             </div>
             <p className="mb-4 text-sm leading-6 text-slate-600">Description: {ticket.description}</p>
-            <p className="text-sm text-slate-500">Assigned to: <span className="font-medium text-slate-700">{ticket.assignedTo}</span></p>
+            <p className="text-sm text-slate-500">Assigned to: <span className="font-medium text-slate-700">{ticket.assignedTo ?? "Unassigned"}</span></p>
             <div className="mt-5 flex gap-3">
                 <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
                     onClick={() => onEdit(ticket.id)}>

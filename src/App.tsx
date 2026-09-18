@@ -4,7 +4,7 @@ import TicketSummary from "./components/TicketSummary";
 import TicketFilters from "./components/TicketFilters";
 import TicketForm from "./components/TicketForm";
 import SearchBox from "./components/SearchBox";
-import type { Ticket, TicketStatus, NewTicketData, UpdateTicketData } from "../types/ticket";
+import type { Ticket, TicketStatus, NewTicketData, UpdateTicketData, User } from "../types/ticket";
 
 
 
@@ -15,12 +15,13 @@ export default function App() {
     const [searchTerm, setSearchTerm] = useState("")
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
         fetch("http://localhost:3001/api/tickets")
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Could not load tickets");
+                    throw new Error("Could not load tickets.");
                 }
 
                 return response.json();
@@ -30,6 +31,24 @@ export default function App() {
             })
             .catch(() => {
                 setError("Could not load tickets.");
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+
+        fetch("http://localhost:3001/api/users")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Could not load users.")
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                setUsers(data);
+            })
+            .catch(() => {
+                setError("Could not load users.")
             })
             .finally(() => {
                 setIsLoading(false);
@@ -185,6 +204,7 @@ export default function App() {
                     editingTicket={editingTicket}
                     onUpdateTicket={handleUpdateTicket}
                     onCancelEdit={handleCancelEdit}
+                    users={users}
                 />
 
                 {

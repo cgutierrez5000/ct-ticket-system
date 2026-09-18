@@ -17,7 +17,8 @@ export interface Ticket {
     description: string;
     priority: TicketPriority;
     status: TicketStatus;
-    assignedTo: string;
+    assignedUserId: number | null;
+    assignedTo: string | null;
 
 }
 
@@ -25,7 +26,7 @@ export type NewTicketData = {
     title: string;
     description: string;
     priority: TicketPriority;
-    assignedTo: string;
+    assignedUserId: number | null;
 }
 
 export type UpdateTicketData = {
@@ -33,7 +34,12 @@ export type UpdateTicketData = {
     description: string;
     priority: TicketPriority;
     status: TicketStatus;
-    assignedTo: string;
+    assignedUserId: number | null;
+};
+
+export type User = {
+    id: number;
+    name: string
 };
 
 

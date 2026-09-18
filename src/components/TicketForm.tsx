@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { SubmitEvent } from "react";
-import type { NewTicketData, UpdateTicketData, TicketPriority, TicketStatus, Ticket, } from "../../types/ticket";
+import type { NewTicketData, UpdateTicketData, TicketPriority, TicketStatus, Ticket, User } from "../../types/ticket";
 
 
 
@@ -9,14 +9,15 @@ type TicketFormProps = {
     editingTicket: Ticket | undefined;
     onUpdateTicket: (updatedTicketData: UpdateTicketData) => void;
     onCancelEdit: () => void;
+    users: User[];
 };
 
-export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket, onCancelEdit }: TicketFormProps) {
+export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket, onCancelEdit, users }: TicketFormProps) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [error, setError] = useState("");
     const [priority, setPriority] = useState<TicketPriority>("medium");
-    const [assignedTo, setAssignedTo] = useState("Unassigned");
+    const [assignedUserId, setAssignedUserId] = useState<number | null>(null);
     const [status, setStatus] = useState<TicketStatus>("open");
 
     useEffect(() => {
@@ -25,14 +26,14 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
             setDescription(editingTicket.description);
             setPriority(editingTicket.priority);
             setStatus(editingTicket.status);
-            setAssignedTo(editingTicket.assignedTo);
+            setAssignedUserId(editingTicket.assignedUserId);
         } else {
             setError("");
             setTitle("");
             setDescription("");
             setPriority("medium");
             setStatus("open");
-            setAssignedTo("Unassigned");
+            setAssignedUserId(null);
         }
     }, [editingTicket]);
 
@@ -47,7 +48,7 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
             title: title.trim(),
             description: description.trim(),
             priority,
-            assignedTo
+            assignedUserId
         };
 
 
@@ -67,7 +68,7 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
         setDescription("");
         setPriority("medium");
         setStatus("open");
-        setAssignedTo("Unassigned");
+        setAssignedUserId(null);
     }
 
     return (
@@ -142,13 +143,13 @@ export default function TicketForm({ onAddTicket, editingTicket, onUpdateTicket,
                     <select className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 
                         text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                         id="assignedTo"
-                        value={assignedTo}
-                        onChange={(event) => setAssignedTo(event.target.value)}>
-                        <option value="Unassigned">Unassigned</option>
-                        <option value="Carlos">Carlos</option>
-                        <option value="Tom">Tom</option>
-                        <option value="Earl">Earl</option>
-                        <option value="John">John</option>
+                        value={assignedUserId ?? ""}
+                        onChange={(event) => setAssignedUserId(event.target.value === "" ? null : Number(event.target.value))}>
+                        <option value="">Unassigned</option>
+                        {users.map(user => (
+                            <option key={user.id} value={user.id}>{user.name}</option>
+                        ))}
+
                     </select>
                 </div>
 
