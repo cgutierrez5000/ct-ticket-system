@@ -4,7 +4,9 @@ import TicketSummary from "./components/TicketSummary";
 import TicketFilters from "./components/TicketFilters";
 import TicketForm from "./components/TicketForm";
 import SearchBox from "./components/SearchBox";
-import type { Ticket, TicketStatus, NewTicketData, UpdateTicketData, User } from "../types/ticket";
+import type { Ticket, TicketStatus, NewTicketData, UpdateTicketData, User, AuthenticatedUser } from "../types/ticket";
+import LoginForm from "./components/LoginForm";
+import RegistrationForm from "./components/RegistrationForm";
 
 
 
@@ -16,9 +18,18 @@ export default function App() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [users, setUsers] = useState<User[]>([]);
+    const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+    const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
     useEffect(() => {
-        fetch("http://localhost:3001/api/tickets")
+        if (currentUser === null) {
+            return;
+        }
+
+        fetch("http://localhost:3001/api/tickets", {
+            credentials: "include"
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Could not load tickets.");
@@ -36,7 +47,9 @@ export default function App() {
                 setIsLoading(false);
             });
 
-        fetch("http://localhost:3001/api/users")
+        fetch("http://localhost:3001/api/users", {
+            credentials: "include"
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Could not load users.")
@@ -53,6 +66,30 @@ export default function App() {
             .finally(() => {
                 setIsLoading(false);
             });
+    }, [currentUser]);
+
+    useEffect(() => {
+
+        fetch("http://localhost:3001/api/auth/me", {
+            credentials: "include"
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Not authenticated");
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                setCurrentUser(data.user);
+            })
+            .catch(() => {
+                setCurrentUser(null);
+            })
+            .finally(() => {
+                setIsCheckingAuth(false);
+            });
+
     }, []);
 
     const statusFilteredTickets =
@@ -77,7 +114,8 @@ export default function App() {
         setError(null);
 
         fetch(`http://localhost:3001/api/tickets/${id}`, {
-            method: "DELETE"
+            method: "DELETE",
+            credentials: "include"
         })
             .then(response => {
                 if (!response.ok) {
@@ -102,6 +140,7 @@ export default function App() {
 
         fetch("http://localhost:3001/api/tickets", {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -130,6 +169,7 @@ export default function App() {
 
         fetch(`http://localhost:3001/api/tickets/${editingTicketId}`, {
             method: "PATCH",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             }, body: JSON.stringify(updatedTicketData)
@@ -162,6 +202,25 @@ export default function App() {
         setEditingTicketId(null);
     }
 
+    function handleLogout() {
+        setError(null);
+        fetch("http://localhost:3001/api/auth/logout", {
+            method: "POST",
+            credentials: "include"
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Could not log out");
+                }
+            })
+            .then(() => {
+                setCurrentUser(null);
+            })
+            .catch(() => {
+                setError("Could not log out");
+            })
+    }
+
     const openCount =
         ticketList.filter(ticket => ticket.status === "open").length;
     const closedCount =
@@ -169,16 +228,61 @@ export default function App() {
     const inProgressCount =
         ticketList.filter(ticket => ticket.status === "in progress").length;
 
+    if (isCheckingAuth) {
+        return <p>Checking authentication...</p>;
+    }
+
+    if (currentUser === null) {
+        return (
+            <main className="min-h-screen bg-slate-100 flex items-center justify-center px-6">
+                <div>
+
+                    {(authMode === "login") ? (
+                        <LoginForm onLogin={setCurrentUser} />
+                    ) : (
+                        <RegistrationForm onRegistered={() => setAuthMode("login")} />
+                    )}
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setAuthMode(authMode === "login" ? "register" : "login")
+                        }
+                        className="mt-4 w-full text-center text-sm font-medium text-slate-600 hover:text-slate-900"
+                    >
+                        {authMode === "login"
+                            ? "Create account"
+                            : "Back to Login"
+                        }
+                    </button>
+
+                </div>
+            </main>
+        )
+    }
+
     return (
+
         <main className="min-h-screen bg-slate-100 px-6 py-10">
             <div className="mx-auto max-w-6xl">
-                <header className="mb-8">
-                    <p className="text-sm font-medium uppercase tracking-wider text-slate-500">
-                        Dashboard
-                    </p>
-                    <h1 className="text-4xl font-bold text-slate-900">
-                        CT Ticket System
-                    </h1>
+                <header className="mb-8 flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium uppercase tracking-wider text-slate-500">
+                            Dashboard
+                        </p>
+                        <h1 className="text-4xl font-bold text-slate-900">
+                            CT Ticket System
+                        </h1>
+                    </div>
+                    <div>
+                        <p className="text-sm font-semibold text-slate-900">{currentUser.name}</p>
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="mt-1 text-sm font-medium text-slate-600 hover:text-slate-900">
+                            Log out
+                        </button>
+                    </div>
                 </header>
                 <TicketSummary
                     total={ticketList.length}

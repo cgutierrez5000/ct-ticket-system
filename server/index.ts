@@ -1,4 +1,5 @@
 import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import "dotenv/config"
 import cors from "cors";
@@ -12,7 +13,10 @@ import bcrypt from "bcrypt";
 const app = express();
 const PORT = 3001;
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json());
 
 const sessionSecret = process.env.SESSION_SECRET;
@@ -30,7 +34,20 @@ app.use(session({
     }
 }));
 
-app.get("/api/tickets", async (req, res) => {
+function requireAuth(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Authentication required"
+        });
+    }
+    next();
+}
+
+app.get("/api/tickets", requireAuth, async (req, res) => {
     try {
         const result = await pool.query(
             `
@@ -100,7 +117,7 @@ app.get("/api/tickets/:id", async (req, res) => {
     }
 });
 
-app.post("/api/tickets", async (req, res) => {
+app.post("/api/tickets", requireAuth, async (req, res) => {
     const {
         title,
         description,
@@ -197,7 +214,7 @@ app.post("/api/tickets", async (req, res) => {
     }
 });
 
-app.patch("/api/tickets/:id", async (req, res) => {
+app.patch("/api/tickets/:id", requireAuth, async (req, res) => {
     const {
         title,
         description,
@@ -315,7 +332,7 @@ app.patch("/api/tickets/:id", async (req, res) => {
     }
 });
 
-app.delete("/api/tickets/:id", async (req, res) => {
+app.delete("/api/tickets/:id", requireAuth, async (req, res) => {
     const ticketId = Number(req.params.id);
 
     try {
@@ -536,7 +553,7 @@ app.get("/api/auth/me", async (req, res) => {
 
 });
 
-app.get("/api/users", async (req, res) => {
+app.get("/api/users", requireAuth, async (req, res) => {
 
     try {
         const result = await pool.query(
@@ -558,6 +575,20 @@ app.get("/api/users", async (req, res) => {
         });
     }
 
+});
+
+app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Internal server error"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Logged out"
+        });
+    });
 });
 
 

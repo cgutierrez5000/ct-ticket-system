@@ -39,7 +39,14 @@ export type UpdateTicketData = {
 
 export type User = {
     id: number;
-    name: string
+    name: string;
 };
+
+export type AuthenticatedUser = {
+    id: number;
+    name: string;
+    email: string;
+    role: "user" | "admin";
+}
 
 
