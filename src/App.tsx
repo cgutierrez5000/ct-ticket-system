@@ -27,7 +27,9 @@ export default function App() {
             return;
         }
 
-        fetch("http://localhost:3001/api/tickets", {
+        setIsLoading(true);
+
+        const ticketsRequest = fetch("http://localhost:3001/api/tickets", {
             credentials: "include"
         })
             .then(response => {
@@ -43,16 +45,13 @@ export default function App() {
             .catch(() => {
                 setError("Could not load tickets.");
             })
-            .finally(() => {
-                setIsLoading(false);
-            });
 
-        fetch("http://localhost:3001/api/users", {
+        const usersRequest = fetch("http://localhost:3001/api/users", {
             credentials: "include"
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Could not load users.")
+                    throw new Error("Could not load users.");
                 }
 
                 return response.json();
@@ -61,11 +60,17 @@ export default function App() {
                 setUsers(data);
             })
             .catch(() => {
-                setError("Could not load users.")
+                setError("Could not load users.");
             })
+
+        Promise.all([
+            ticketsRequest,
+            usersRequest
+        ])
             .finally(() => {
                 setIsLoading(false);
             });
+
     }, [currentUser]);
 
     useEffect(() => {
@@ -275,11 +280,15 @@ export default function App() {
                         </h1>
                     </div>
                     <div>
-                        <p className="text-sm font-semibold text-slate-900">{currentUser.name}</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-slate-900">{currentUser.name}</p>
+                            <p className="text-xs uppercase  rounded-full px-2 py-0.5 text-slate-500 bg-slate-200">{currentUser.role}
+                            </p>
+                        </div>
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="mt-1 text-sm font-medium text-slate-600 hover:text-slate-900">
+                            className="mt-2 text-sm font-medium text-slate-600 hover:text-slate-900">
                             Log out
                         </button>
                     </div>
@@ -334,6 +343,7 @@ export default function App() {
                             ticket={ticket}
                             onDelete={handleDelete}
                             onEdit={handleEdit}
+                            canDelete={currentUser.role === "admin"}
                         />
                     ))
                 )}

@@ -4,6 +4,7 @@ type TicketCardProps = {
     ticket: Ticket;
     onDelete: (id: number) => void;
     onEdit: (id: number) => void;
+    canDelete: boolean;
 };
 
 const priorityClasses = {
@@ -19,7 +20,7 @@ const statusClasses = {
     closed: "bg-slate-100 text-slate-600"
 };
 
-export default function TicketCard({ ticket, onDelete, onEdit }: TicketCardProps) {
+export default function TicketCard({ ticket, onDelete, onEdit, canDelete }: TicketCardProps) {
     return (
         <article className="mb-4 rounded-xl bg-white p-5 shadow-sm">
             <div className="mb-3 flex items-start justify-between gap-4">
@@ -43,10 +44,15 @@ export default function TicketCard({ ticket, onDelete, onEdit }: TicketCardProps
                     onClick={() => onEdit(ticket.id)}>
                     Edit
                 </button>
-                <button className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-                    onClick={() => onDelete(ticket.id)}>
-                    Delete
-                </button>
+                {
+                    canDelete && (
+                        <button className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                            onClick={() => onDelete(ticket.id)}>
+                            Delete
+                        </button>
+                    )
+                }
+
             </div>
         </article>
     );

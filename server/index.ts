@@ -47,6 +47,47 @@ function requireAuth(
     next();
 }
 
+async function requireAdmin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const result = await pool.query(
+            `
+            SELECT role
+            FROM users
+            WHERE id = $1
+            `,
+            [req.session.userId]
+        );
+
+        const user = result.rows[0];
+
+        if (user === undefined) {
+            return res.status(401).json({
+                message: "User not found"
+            });
+        }
+
+        if (user.role !== "admin") {
+            return res.status(403).json({
+                message: "Admin access required"
+            });
+        }
+
+        next();
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+
+}
+
 app.get("/api/tickets", requireAuth, async (req, res) => {
     try {
         const result = await pool.query(
@@ -332,7 +373,7 @@ app.patch("/api/tickets/:id", requireAuth, async (req, res) => {
     }
 });
 
-app.delete("/api/tickets/:id", requireAuth, async (req, res) => {
+app.delete("/api/tickets/:id", requireAuth, requireAdmin, async (req, res) => {
     const ticketId = Number(req.params.id);
 
     try {
