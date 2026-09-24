@@ -1,6 +1,7 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import "dotenv/config"
 import cors from "cors";
 import pool from "./db.js";
@@ -10,6 +11,7 @@ import {
 } from "../utils/ticketUtils.js";
 import bcrypt from "bcrypt";
 
+const PostgresSessionStore = connectPgSimple(session);
 const app = express();
 const PORT = 3001;
 
@@ -31,7 +33,11 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true
-    }
+    },
+    store: new PostgresSessionStore({
+        pool: pool,
+        createTableIfMissing: true
+    }),
 }));
 
 function requireAuth(
