@@ -7,8 +7,7 @@ import SearchBox from "./components/SearchBox";
 import type { Ticket, TicketStatus, NewTicketData, UpdateTicketData, User, AuthenticatedUser } from "../types/ticket";
 import LoginForm from "./components/LoginForm";
 import RegistrationForm from "./components/RegistrationForm";
-
-
+import { API_URL } from "./config";
 
 export default function App() {
     const [statusFilter, setStatusFilter] = useState<TicketStatus | "all">("all");
@@ -29,7 +28,7 @@ export default function App() {
 
         setIsLoading(true);
 
-        const ticketsRequest = fetch("http://localhost:3001/api/tickets", {
+        const ticketsRequest = fetch(`${API_URL}/api/tickets`, {
             credentials: "include"
         })
             .then(response => {
@@ -46,7 +45,7 @@ export default function App() {
                 setError("Could not load tickets.");
             })
 
-        const usersRequest = fetch("http://localhost:3001/api/users", {
+        const usersRequest = fetch(`${API_URL}/api/users`, {
             credentials: "include"
         })
             .then(response => {
@@ -75,7 +74,7 @@ export default function App() {
 
     useEffect(() => {
 
-        fetch("http://localhost:3001/api/auth/me", {
+        fetch(`${API_URL}/api/auth/me`, {
             credentials: "include"
         })
             .then(response => {
@@ -118,7 +117,7 @@ export default function App() {
     function handleDelete(id: number) {
         setError(null);
 
-        fetch(`http://localhost:3001/api/tickets/${id}`, {
+        fetch(`${API_URL}/api/tickets/${id}`, {
             method: "DELETE",
             credentials: "include"
         })
@@ -143,7 +142,7 @@ export default function App() {
     function handleAddTicket(newTicketData: NewTicketData) {
         setError(null);
 
-        fetch("http://localhost:3001/api/tickets", {
+        fetch(`${API_URL}api/tickets`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -172,7 +171,7 @@ export default function App() {
     function handleUpdateTicket(updatedTicketData: UpdateTicketData) {
         setError(null);
 
-        fetch(`http://localhost:3001/api/tickets/${editingTicketId}`, {
+        fetch(`${API_URL}/api/tickets/${editingTicketId}`, {
             method: "PATCH",
             credentials: "include",
             headers: {
@@ -209,7 +208,7 @@ export default function App() {
 
     function handleLogout() {
         setError(null);
-        fetch("http://localhost:3001/api/auth/logout", {
+        fetch(`${API_URL}/api/auth/logout`, {
             method: "POST",
             credentials: "include"
         })

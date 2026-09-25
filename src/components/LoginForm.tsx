@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
 import type { AuthenticatedUser } from "../../types/ticket";
+import { API_URL } from "../config";
 
 type LoginFormProps = {
     onLogin: (user: AuthenticatedUser) => void;
@@ -16,7 +17,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
         event.preventDefault();
         setError(null);
 
-        fetch("http://localhost:3001/api/auth/login", {
+        fetch(`${API_URL}/api/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

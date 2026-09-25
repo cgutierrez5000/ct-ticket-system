@@ -13,19 +13,26 @@ import bcrypt from "bcrypt";
 
 const PostgresSessionStore = connectPgSimple(session);
 const app = express();
-const PORT = 3001;
-
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}));
-app.use(express.json());
+const PORT = Number(process.env.PORT) || 3001;
 
 const sessionSecret = process.env.SESSION_SECRET;
 
 if (!sessionSecret) {
     throw new Error("SESSION_SECRET is not defined");
 }
+
+const clientOrigin = process.env.CLIENT_ORIGIN;
+
+if (!clientOrigin) {
+    throw new Error("CLIENT_ORIGIN is not defined");
+}
+
+app.use(cors({
+    origin: clientOrigin,
+    credentials: true
+}));
+
+app.use(express.json());
 
 app.use(session({
     secret: sessionSecret,
@@ -38,6 +45,7 @@ app.use(session({
         pool: pool,
         createTableIfMissing: true
     }),
+
 }));
 
 function requireAuth(

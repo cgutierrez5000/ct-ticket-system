@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
+import { API_URL } from "../config";
 
 type RegistrationFormProps = {
     onRegistered: () => void;
@@ -17,7 +18,7 @@ export default function RegistrationForm({ onRegistered }: RegistrationFormProps
         event.preventDefault();
         setError(null);
 
-        fetch("http://localhost:3001/api/auth/register", {
+        fetch(`${API_URL}/api/auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
