@@ -1,66 +1,76 @@
 # CT Ticket System
 
-A ticket management application built as part of my transition from front-end development into full-stack and web platform engineering.
+A full-stack ticket management application built as part of my transition from front-end development into full-stack and web platform engineering.
 
-The project is being developed incrementally, beginning with core JavaScript business logic and evolving into a production-ready full-stack application.
+The project is being developed incrementally, beginning with core JavaScript business logic and evolving into a production-ready, containerized full-stack application with authentication, PostgreSQL persistence, and cloud deployment.
 
 ## Current Version
 
-### v0.8 — PostgreSQL Persistence
+### v1.0 — Deployment & DevOps (In Progress)
 
-The application now uses a full client/server/database architecture with a React and TypeScript frontend, a Node.js and Express REST API, and PostgreSQL for persistent ticket storage.
+The application now uses a full client/server/database architecture with a React and TypeScript frontend, Node.js and Express REST API, PostgreSQL persistence, session-based authentication, role-based authorization, and a Dockerized backend.
 
-Ticket data is no longer stored in memory on the Express server. CRUD operations are executed against PostgreSQL using parameterized SQL queries through the `pg` Node.js driver.
+The Express backend can be compiled from TypeScript into production JavaScript and packaged as a Linux Docker image. Environment-specific configuration is supplied at runtime rather than embedded in the application image.
 
-Current functionality includes:
+Current deployment progress:
 
-* React application with TypeScript
-* Node.js and Express REST API
-* PostgreSQL persistent storage
-* PostgreSQL connection pooling with `pg`
-* Client/server/database architecture
-* HTTP communication with the Fetch API
-* JSON request and response handling
-* CORS configuration
-* Reusable React components
-* Typed props and state
-* RESTful ticket endpoints
-* GET all tickets
-* GET ticket by ID
-* POST ticket creation
-* PATCH ticket updates
-* DELETE ticket removal
-* PostgreSQL-generated ticket IDs
-* PostgreSQL default ticket status
-* Database constraints
-* Parameterized SQL queries
-* SQL `RETURNING`
-* SQL column aliases for database/API naming
-* Server-side request validation
-* HTTP status codes
-* Frontend API error handling
-* Initial loading state
-* Controlled form inputs
-* Create and update data types
-* Editable ticket status
-* Form validation
-* Input normalization and trimming
-* Priority selection
-* Assignee selection
-* Status filtering
-* Case-insensitive ticket search
-* Combined search and status filtering
-* Conditional rendering
-* Derived state
-* Immutable state updates
-* Edit-mode state management
-* `useEffect` synchronization
-* Cancel/reset edit functionality
-* Automated unit testing with Vitest
+- Production TypeScript server build
+- Dockerized Node.js / Express backend
+- Linux-based Docker image
+- Environment-based frontend API configuration
+- Environment-based backend configuration
+- Dynamic server port configuration
+- Environment-aware PostgreSQL configuration
+- Runtime environment variables
+- Persistent PostgreSQL-backed sessions
+- Docker-to-PostgreSQL networking
+- Dockerized authentication and API verified
+- Azure cloud deployment — in progress
+- CI/CD — planned
+
+## Current Functionality
+
+- React application with TypeScript
+- Node.js and Express REST API
+- PostgreSQL persistent storage
+- PostgreSQL connection pooling with `pg`
+- User registration
+- Password hashing with `bcrypt`
+- Login and logout
+- Session-based authentication
+- PostgreSQL-backed persistent sessions
+- Role-based authorization
+- Admin and standard user roles
+- Protected API routes
+- Admin-only ticket deletion
+- User-to-ticket assignments
+- Client/server/database architecture
+- HTTP communication with Fetch API
+- JSON request and response handling
+- Environment-aware CORS configuration
+- Reusable React components
+- Typed props and state
+- RESTful ticket endpoints
+- PostgreSQL-generated ticket IDs
+- PostgreSQL default ticket status
+- Database constraints
+- Parameterized SQL queries
+- Server-side request validation
+- Frontend API error handling
+- Controlled form inputs
+- Editable ticket status
+- Form validation
+- Status filtering
+- Case-insensitive ticket search
+- Combined search and status filtering
+- Conditional rendering
+- Derived state
+- Immutable state updates
+- Automated unit testing with Vitest
 
 ## Architecture
 
-The application follows a client/server/database architecture:
+The application currently follows this architecture:
 
 ```text
 React + TypeScript
@@ -70,314 +80,16 @@ React + TypeScript
        v
 Node.js + Express
        |
+       | Authentication
+       | Authorization
        | Validation
        | REST API
        | Parameterized SQL
        v
 PostgreSQL
        |
-       | Persistent storage
-       | Constraints
-       | Identity-generated IDs
+       | Ticket data
+       | User data
+       | Session data
        v
-Ticket Data
-```
-
-PostgreSQL is the persistent source of truth for ticket data.
-
-The Express API validates requests and communicates with PostgreSQL through a connection pool. The React frontend updates its local state after receiving successful API responses.
-
-Database column names use SQL-style `snake_case`, while API responses use JavaScript-style `camelCase`. SQL aliases are used to map fields such as:
-
-```text
-assigned_to → assignedTo
-```
-
-## Technologies
-
-Currently:
-
-* React
-* TypeScript
-* JavaScript
-* Node.js
-* Express
-* PostgreSQL
-* `pg`
-* SQL
-* REST APIs
-* Fetch API
-* JSON
-* CORS
-* Tailwind CSS
-* Vitest
-* Git
-* GitHub
-
-## PostgreSQL
-
-The application uses PostgreSQL for persistent ticket storage.
-
-The `tickets` table includes:
-
-```text
-id
-title
-description
-priority
-status
-assigned_to
-```
-
-Database-level protections include:
-
-* Identity-generated primary keys
-* `NOT NULL` constraints
-* Priority `CHECK` constraint
-* Status `CHECK` constraint
-* Default `open` ticket status
-
-The database schema is stored in:
-
-```text
-server/database/schema.sql
-```
-
-This allows the database structure to be recreated independently of the local development database.
-
-## REST API
-
-Current ticket endpoints:
-
-```text
-GET     /api/tickets
-GET     /api/tickets/:id
-POST    /api/tickets
-PATCH   /api/tickets/:id
-DELETE  /api/tickets/:id
-```
-
-The API includes server-side validation and uses HTTP status codes including:
-
-* `200 OK`
-* `201 Created`
-* `400 Bad Request`
-* `404 Not Found`
-* `500 Internal Server Error`
-
-Ticket IDs are generated by PostgreSQL rather than the React frontend or Express server.
-
-New tickets receive an `open` status from the PostgreSQL default.
-
-## Database Queries
-
-The Express API uses parameterized SQL queries instead of interpolating request values directly into SQL.
-
-Example pattern:
-
-```sql
-SELECT *
-FROM tickets
-WHERE id = $1;
-```
-
-Values are supplied separately through the `pg` query API.
-
-CRUD operations use:
-
-* `SELECT`
-* `INSERT`
-* `UPDATE`
-* `DELETE`
-* `RETURNING`
-
-`RETURNING` allows PostgreSQL to send created, updated, or deleted rows directly back to the API.
-
-## Automated Testing
-
-The project uses Vitest for automated unit testing.
-
-Run tests in watch mode:
-
-```bash
-npm test
-```
-
-Run the test suite once:
-
-```bash
-npm test -- --run
-```
-
-Run TypeScript type checking:
-
-```bash
-npx tsc --noEmit
-```
-
-Current test coverage includes:
-
-* Priority validation
-* Status validation
-* Ticket validation
-* Ticket lookup
-* Ticket ID duplicate detection
-* Adding valid tickets
-* Rejecting invalid tickets
-* Rejecting duplicate IDs
-* Immutable ticket status updates
-* Ticket deletion
-* Ticket filtering by status
-* Edge cases and defensive inputs
-
-Current test suite: **20 passing tests**
-
-## Version History
-
-### v0.1 — JavaScript & Modules
-
-* Core ticket data model
-* ES modules
-* Ticket lookup and filtering utilities
-
-### v0.2 — Immutable Business Logic
-
-* Immutable ticket updates
-* Status changes
-* Add/delete operations
-
-### v0.3 — Validation & Defensive JavaScript
-
-* Priority validation
-* Status validation
-* Ticket validation
-* Duplicate ID detection
-* Defensive input handling
-
-### v0.4 — Automated Testing
-
-* Vitest setup
-* Unit tests for ticket utilities and business logic
-* Regression testing
-
-### v0.5 — TypeScript
-
-* Typed Ticket interface and domain models
-* Union types for ticket priority and status
-* Typed function parameters and return values
-* Type guards and type narrowing
-* Compile-time type checking
-
-### v0.6 — React CRUD Interface
-
-* React and TypeScript UI
-* Reusable components
-* Create, read, update, and delete ticket functionality
-* Controlled forms
-* Form validation
-* Priority and assignee controls
-* Status filtering
-* Case-insensitive title search
-* Combined filtering and search
-* Edit and cancel-edit modes
-* Derived state
-* Immutable React state updates
-* `useEffect` synchronization
-* Tailwind CSS interface styling
-
-### v0.7 — React + Node.js / Express API
-
-* Express server setup
-* REST API architecture
-* React-to-Express API integration
-* GET all tickets
-* GET ticket by ID
-* POST ticket creation
-* PATCH ticket updates
-* DELETE ticket removal
-* Server-side validation
-* HTTP status codes
-* JSON request and response handling
-* CORS configuration
-* Frontend `response.ok` handling
-* API error states
-* Initial loading state
-* React state synchronization with successful API responses
-* TypeScript verification
-* Existing Vitest test suite passing
-
-### v0.8 — PostgreSQL Persistence
-
-* PostgreSQL database
-* Relational ticket table
-* Persistent ticket storage
-* PostgreSQL connection pooling
-* Express-to-PostgreSQL integration
-* SQL-based CRUD operations
-* Parameterized SQL queries
-* Identity-generated primary keys
-* Database constraints
-* Default ticket status
-* SQL `RETURNING`
-* SQL column aliases
-* `snake_case` database naming
-* `camelCase` API naming
-* POST migrated from in-memory storage to PostgreSQL
-* PATCH migrated to PostgreSQL
-* DELETE migrated to PostgreSQL
-* GET routes migrated to PostgreSQL
-* Editable ticket status
-* Separate create and update TypeScript data models
-* In-memory `ticketList` dependency removed
-* Persistence verified across server restarts
-* Reusable database schema file
-
-## Project Roadmap
-
-### v0.9 — Authentication & Users
-
-Next milestone:
-
-* User accounts
-* User database model
-* Password hashing
-* Login and authentication
-* Authorization
-* Protected API routes
-* Ticket ownership and assignments
-
-### v1.0 — Deployment
-
-* Docker
-* GitHub Actions
-* CI/CD
-* Cloud deployment
-* Environment and secrets management
-* Production PostgreSQL configuration
-* Production application configuration
-
-## Future Front-End Enhancements
-
-* Responsive dashboard refinements
-* Improved ticket grid and detail views
-* Sorting
-* Additional categorization
-* More granular request loading states
-* Improved API error feedback
-* Additional interface refinements
-* Redux Toolkit where shared client state justifies it
-* Server-state management as the API architecture evolves
-
-## Testing Roadmap
-
-* Express API/integration testing
-* React component testing
-* Expanded validation testing
-* PostgreSQL integration testing
-* End-to-end testing
-
-## Development Approach
-
-This project is intentionally being built in stages so that each layer of the application—from JavaScript and TypeScript fundamentals through React, full-stack architecture, databases, testing, authentication, and cloud deployment—is implemented and understood incrementally.
-
-Each version introduces a new engineering layer while retaining and building upon concepts implemented in previous versions.
+Persistent Storage
