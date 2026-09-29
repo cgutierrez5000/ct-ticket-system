@@ -13,7 +13,11 @@ import bcrypt from "bcrypt";
 
 const PostgresSessionStore = connectPgSimple(session);
 const app = express();
+if (process.env.NODE_ENV === "production") {
+    app.set("trust proxy", 1);
+}
 const PORT = Number(process.env.PORT) || 3001;
+const isProduction = process.env.NODE_ENV === "production";
 
 const sessionSecret = process.env.SESSION_SECRET;
 
@@ -39,7 +43,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        httpOnly: true
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax"
     },
     store: new PostgresSessionStore({
         pool: pool,
