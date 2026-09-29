@@ -4,6 +4,16 @@ A full-stack ticket management application built with React, TypeScript, Node.js
 
 CT Ticket System provides authenticated users with a workflow for creating, managing, assigning, searching, filtering, and updating support tickets, with administrative permissions for protected operations.
 
+## Live Application
+
+**Frontend:**
+https://tickets.carlogia.com/
+
+**Production API:**
+https://api.carlogia.com/
+
+The application is deployed to Microsoft Azure, with the React frontend hosted on Azure Static Web Apps and the containerized Express API running on Azure Container Apps.
+
 ## Current Version
 
 ### v1.0 — Full-Stack Cloud Deployment
