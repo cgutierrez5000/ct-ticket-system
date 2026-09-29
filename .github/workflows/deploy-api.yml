@@ -1,0 +1,57 @@
+name: Deploy API to Azure Container Apps
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --run
+      
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ctticketsystemacr
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ctticketsystemacr-fmbkg3ejfsg4h4fx.azurecr.io/ct-ticket-system-api:${{ github.sha }} \
+            .
+      - name: Push Docker image
+        run: |
+          docker push \
+            ctticketsystemacr-fmbkg3ejfsg4h4fx.azurecr.io/ct-ticket-system-api:${{ github.sha }}
+
+      - name: Deploy to Azure Container Apps
+        run: |
+          az containerapp update \
+            --name ct-ticket-system-api \
+            --resource-group rg-ct-ticket-system \
+            --image ctticketsystemacr-fmbkg3ejfsg4h4fx.azurecr.io/ct-ticket-system-api:${{ github.sha }}
