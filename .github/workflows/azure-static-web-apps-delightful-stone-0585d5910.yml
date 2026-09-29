@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - "**/*.md"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
