@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-      VITE_API_URL: https://ct-ticket-system-api.lemoncoast-cf17bc7e.centralus.azurecontainerapps.io
+      VITE_API_URL: https://api.carlogia.com
     steps:
       - uses: actions/checkout@v3
         with:
