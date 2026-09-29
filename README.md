@@ -1,34 +1,22 @@
 # CT Ticket System
 
-A full-stack ticket management application built as part of my transition from front-end development into full-stack and web platform engineering.
+A full-stack ticket management application built with React, TypeScript, Node.js, Express, and PostgreSQL, with authentication, role-based authorization, containerized deployment to Microsoft Azure, and automated CI/CD through GitHub Actions.
 
-The project is being developed incrementally, beginning with core JavaScript business logic and evolving into a production-ready, containerized full-stack application with authentication, PostgreSQL persistence, and cloud deployment.
+CT Ticket System provides authenticated users with a workflow for creating, managing, assigning, searching, filtering, and updating support tickets, with administrative permissions for protected operations.
 
 ## Current Version
 
-### v1.0 — Deployment & DevOps (In Progress)
+### v1.0 — Full-Stack Cloud Deployment
 
-The application now uses a full client/server/database architecture with a React and TypeScript frontend, Node.js and Express REST API, PostgreSQL persistence, session-based authentication, role-based authorization, and a Dockerized backend.
+CT Ticket System is deployed as a full client/server/database application.
 
-The Express backend can be compiled from TypeScript into production JavaScript and packaged as a Linux Docker image. Environment-specific configuration is supplied at runtime rather than embedded in the application image.
+The React and TypeScript frontend is hosted on Azure Static Web Apps. The Node.js and Express REST API is packaged as a Docker container and deployed to Azure Container Apps, with PostgreSQL providing persistent application, user, and session data.
 
-Current deployment progress:
+Backend deployments are automated through GitHub Actions. Changes pushed to the `master` branch are tested with Vitest, authenticated to Azure using OpenID Connect (OIDC), packaged into a Docker image, pushed to Azure Container Registry, and deployed to Azure Container Apps.
 
-- Production TypeScript server build
-- Dockerized Node.js / Express backend
-- Linux-based Docker image
-- Environment-based frontend API configuration
-- Environment-based backend configuration
-- Dynamic server port configuration
-- Environment-aware PostgreSQL configuration
-- Runtime environment variables
-- Persistent PostgreSQL-backed sessions
-- Docker-to-PostgreSQL networking
-- Dockerized authentication and API verified
-- Azure cloud deployment — in progress
-- CI/CD — planned
+Docker images are tagged with the Git commit SHA, providing traceability between source code, GitHub Actions runs, container images, and production deployments.
 
-## Current Functionality
+## Key Features
 
 - React application with TypeScript
 - Node.js and Express REST API
@@ -44,12 +32,6 @@ Current deployment progress:
 - Protected API routes
 - Admin-only ticket deletion
 - User-to-ticket assignments
-- Client/server/database architecture
-- HTTP communication with Fetch API
-- JSON request and response handling
-- Environment-aware CORS configuration
-- Reusable React components
-- Typed props and state
 - RESTful ticket endpoints
 - PostgreSQL-generated ticket IDs
 - PostgreSQL default ticket status
@@ -68,28 +50,76 @@ Current deployment progress:
 - Immutable state updates
 - Automated unit testing with Vitest
 
-## Architecture
+## Technology Stack
 
-The application currently follows this architecture:
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Fetch API
+- HTML
+- CSS
+
+### Backend
+
+- Node.js
+- Express
+- TypeScript
+- REST API
+- `bcrypt`
+- Session-based authentication
+
+### Database
+
+- PostgreSQL
+- `pg`
+- Parameterized SQL
+- PostgreSQL-backed session storage
+
+### Testing
+
+- Vitest
+- Automated tests executed as part of the backend CI/CD pipeline
+
+### Cloud & DevOps
+
+- Docker
+- Microsoft Azure
+- Azure Static Web Apps
+- Azure Container Apps
+- Azure Container Registry
+- GitHub Actions
+- OpenID Connect (OIDC)
+- Environment-based configuration
+- Automated CI/CD
+
+## Application Architecture
 
 ```text
-React + TypeScript
-       |
-       | HTTP / JSON
-       | Fetch API
-       v
-Node.js + Express
-       |
-       | Authentication
-       | Authorization
-       | Validation
-       | REST API
-       | Parameterized SQL
-       v
-PostgreSQL
-       |
-       | Ticket data
-       | User data
-       | Session data
-       v
-Persistent Storage
+                    USERS
+                      │
+                      ▼
+              React + TypeScript
+             Azure Static Web Apps
+                      │
+                 HTTPS / JSON
+                  Fetch API
+                      │
+                      ▼
+             Express + TypeScript
+             Azure Container Apps
+                      │
+                Authentication
+                Authorization
+                  Validation
+                   REST API
+                      │
+              Parameterized SQL
+                      │
+                      ▼
+                  PostgreSQL
+                      │
+          ┌───────────┼───────────┐
+          │           │           │
+       Tickets       Users      Sessions
