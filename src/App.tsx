@@ -142,7 +142,7 @@ export default function App() {
     function handleAddTicket(newTicketData: NewTicketData) {
         setError(null);
 
-        fetch(`${API_URL}api/tickets`, {
+        fetch(`${API_URL}/api/tickets`, {
             method: "POST",
             credentials: "include",
             headers: {
