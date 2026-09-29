@@ -14,6 +14,27 @@ https://api.carlogia.com/
 
 The application is deployed to Microsoft Azure, with the React frontend hosted on Azure Static Web Apps and the containerized Express API running on Azure Container Apps.
 
+## Application Preview
+
+### Admin Dashboard
+
+![CT Ticket System Admin Dashboard](docs/screenshots/dashboard-admin.jpg)
+
+The administrator dashboard provides ticket metrics, search and status filtering, ticket creation and assignment, priority and status tracking, and administrative controls for editing and deleting tickets.
+
+### Role-Based Access
+
+![CT Ticket System Standard User Dashboard](docs/screenshots/dashboard.jpg)
+
+Standard users can create and edit tickets but do not receive administrator-only deletion controls. Authorization for protected operations is enforced by the backend API.
+
+### Authentication
+
+<img src="docs/screenshots/login.jpg" alt="CT Ticket System Login" width="500">
+
+CT Ticket System uses session-based authentication with PostgreSQL-backed persistent sessions.
+
+
 ## Current Version
 
 ### v1.0 — Full-Stack Cloud Deployment
