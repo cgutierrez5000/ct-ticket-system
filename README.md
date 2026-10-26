@@ -1,4 +1,5 @@
 # CT Ticket System
+**Client Tracking Ticket System**
 
 A full-stack ticket management application built with React, TypeScript, Node.js, Express, and PostgreSQL, with authentication, role-based authorization, containerized deployment to Microsoft Azure, and automated CI/CD through GitHub Actions.
 
