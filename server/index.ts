@@ -38,6 +38,13 @@ app.use(cors({
 
 app.use(express.json());
 
+// Health check endpoint for uptime monitoring
+app.get("/health", (_req, res) => {
+    return res.status(200).json({
+        status: "ok"
+    });
+});
+
 app.use(session({
     secret: sessionSecret,
     resave: false,
