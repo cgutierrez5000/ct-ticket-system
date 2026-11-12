@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TicketCard from "./components/TicketCard";
 import TicketSummary from "./components/TicketSummary";
 import TicketFilters from "./components/TicketFilters";
@@ -14,6 +14,19 @@ function isClarityEnabled() {
         window.location.hostname === "tickets.carlogia.com";
 }
 
+type AuthAnalyticsWindow = Window & {
+    dataLayer?: unknown[];
+    clarity?: (
+        command: "event",
+        eventName: "account_created" | "sign_in_succeeded"
+    ) => void;
+};
+
+function gtag(..._args: unknown[]) {
+    const analyticsWindow = window as AuthAnalyticsWindow;
+    (analyticsWindow.dataLayer ??= []).push(arguments);
+}
+
 export default function App() {
     const [statusFilter, setStatusFilter] = useState<TicketStatus | "all">("all");
     const [ticketList, setTicketList] = useState<Ticket[]>([]);
@@ -25,6 +38,8 @@ export default function App() {
     const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [authMode, setAuthMode] = useState<"login" | "register">("login");
+
+    const loginRedirectPending = useRef(false);
 
     useEffect(() => {
         if (isCheckingAuth || currentUser !== null || !isClarityEnabled()) {
@@ -58,13 +73,6 @@ export default function App() {
         const scriptId = "ticket-app-google-tag";
         if (document.getElementById(scriptId)) return;
 
-        const analyticsWindow = window as Window & { dataLayer?: unknown[] };
-        const dataLayer = (analyticsWindow.dataLayer ??= []);
-
-        function gtag(..._args: unknown[]) {
-            dataLayer.push(arguments);
-        }
-
         gtag("js", new Date());
         gtag("config", measurementId);
 
@@ -75,14 +83,42 @@ export default function App() {
         document.head.appendChild(script);
     }, [isCheckingAuth, currentUser]);
 
-    function handleLogin(user: AuthenticatedUser) {
+    function handleRegistration() {
         if (isClarityEnabled()) {
-            // Open the dashboard in a fresh page without the public tracker.
-            window.location.reload();
+            gtag("event", "sign_up", { method: "email" });
+            (window as AuthAnalyticsWindow).clarity?.("event", "account_created");
+        }
+
+        setAuthMode("login");
+    }
+
+    function handleLogin(user: AuthenticatedUser) {
+        if (!isClarityEnabled()) {
+            setCurrentUser(user);
             return;
         }
 
-        setCurrentUser(user);
+        if (loginRedirectPending.current) return;
+        loginRedirectPending.current = true;
+
+        const analyticsWaitMs = 400;
+        let reloading = false;
+
+        const openDashboard = () => {
+            if (reloading) return;
+            reloading = true;
+            window.clearTimeout(fallbackTimer);
+            window.location.reload();
+        };
+
+        const fallbackTimer = window.setTimeout(openDashboard, analyticsWaitMs);
+
+        (window as AuthAnalyticsWindow).clarity?.("event", "sign_in_succeeded");
+        gtag("event", "login", {
+            method: "email",
+            event_callback: openDashboard,
+            event_timeout: analyticsWaitMs,
+        });
     }
 
     useEffect(() => {
@@ -308,7 +344,7 @@ export default function App() {
                     {(authMode === "login") ? (
                         <LoginForm onLogin={handleLogin} />
                     ) : (
-                        <RegistrationForm onRegistered={() => setAuthMode("login")} />
+                        <RegistrationForm onRegistered={handleRegistration} />
                     )}
 
                     <button
