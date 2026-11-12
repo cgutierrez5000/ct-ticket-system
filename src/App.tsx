@@ -9,6 +9,11 @@ import LoginForm from "./components/LoginForm";
 import RegistrationForm from "./components/RegistrationForm";
 import { API_URL } from "./config";
 
+function isClarityEnabled() {
+    return import.meta.env.PROD &&
+        window.location.hostname === "tickets.carlogia.com";
+}
+
 export default function App() {
     const [statusFilter, setStatusFilter] = useState<TicketStatus | "all">("all");
     const [ticketList, setTicketList] = useState<Ticket[]>([]);
@@ -20,6 +25,39 @@ export default function App() {
     const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [authMode, setAuthMode] = useState<"login" | "register">("login");
+
+    useEffect(() => {
+        if (isCheckingAuth || currentUser !== null || !isClarityEnabled()) {
+            return;
+        }
+
+        const clarityWindow = window as Window & {
+            clarity?: ((...args: unknown[]) => void) & { q?: unknown[][] };
+        };
+
+        if (clarityWindow.clarity) return;
+
+        const queue: unknown[][] = [];
+        const enqueue = (...args: unknown[]) => {
+            queue.push(args);
+        };
+        clarityWindow.clarity = Object.assign(enqueue, { q: queue });
+
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = "https://www.clarity.ms/tag/zco5635wss";
+        document.head.appendChild(script);
+    }, [isCheckingAuth, currentUser]);
+
+    function handleLogin(user: AuthenticatedUser) {
+        if (isClarityEnabled()) {
+            // Open the dashboard in a fresh page without the public tracker.
+            window.location.reload();
+            return;
+        }
+
+        setCurrentUser(user);
+    }
 
     useEffect(() => {
         if (currentUser === null) {
@@ -238,11 +276,11 @@ export default function App() {
 
     if (currentUser === null) {
         return (
-            <main className="min-h-screen bg-slate-100 flex items-center justify-center px-6">
+            <main data-clarity-mask="true" className="min-h-screen bg-slate-100 flex items-center justify-center px-6">
                 <div>
 
                     {(authMode === "login") ? (
-                        <LoginForm onLogin={setCurrentUser} />
+                        <LoginForm onLogin={handleLogin} />
                     ) : (
                         <RegistrationForm onRegistered={() => setAuthMode("login")} />
                     )}
