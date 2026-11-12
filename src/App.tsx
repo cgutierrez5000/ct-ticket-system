@@ -49,6 +49,32 @@ export default function App() {
         document.head.appendChild(script);
     }, [isCheckingAuth, currentUser]);
 
+    useEffect(() => {
+        if (isCheckingAuth || currentUser !== null || !isClarityEnabled()) {
+            return;
+        }
+
+        const measurementId = "G-Q9Q22B5GR1";
+        const scriptId = "ticket-app-google-tag";
+        if (document.getElementById(scriptId)) return;
+
+        const analyticsWindow = window as Window & { dataLayer?: unknown[] };
+        const dataLayer = (analyticsWindow.dataLayer ??= []);
+
+        function gtag(..._args: unknown[]) {
+            dataLayer.push(arguments);
+        }
+
+        gtag("js", new Date());
+        gtag("config", measurementId);
+
+        const script = document.createElement("script");
+        script.id = scriptId;
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+        document.head.appendChild(script);
+    }, [isCheckingAuth, currentUser]);
+
     function handleLogin(user: AuthenticatedUser) {
         if (isClarityEnabled()) {
             // Open the dashboard in a fresh page without the public tracker.
